@@ -13,3 +13,4 @@ trait T {
 }
 {% endhighlight %}
 
+Let's do some inline {% ihighlight rust %} trait Magic {% endihighlight %}.
