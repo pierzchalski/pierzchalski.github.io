@@ -63,4 +63,52 @@ fn convert_fun<'a, Start, A, B, F>
 
 I may have lied slightly: you might have noticed the lifetime parameter `'a` in the code above being used for both the thing we're converting (`fun`) and the function we use to convert it (`f`).
 This is important for making sure that the converting function `f` lives at least as long as the things it converts.
-We can stick this same pattern into all the other examples, so maybe the abstraction involves functions with lifetimes.
+We can stick this same pattern into all the other examples, so maybe the 'right' abstraction involves functions with lifetimes.
+
+This is a pretty simple and common pattern, but it's rare that we want to abstract over types that can implement it.
+However, a lot of things that have this conversion property also have a more useful property.
+Say we have a container of type `C` containing some `A`, and another container (of the same type `C`) containing a function from `A` to `B`.
+We can 'internally apply' the contained function to the contained value to get a container (again, of type `C`) containing `B`
+(This is different to the property above, in that the function is contained as well as the value it gets applied to).
+
+Usually if we can do that then we can also 'wrap' values: if we have a value of type `A` we can put it 'into' the container type `C`.
+As you can imagine, that part isn't as interesting to implement.
+However, it's still important that we have that ability.
+
+We can produce examples of this 'application' property for all the examples of the 'convertable' property listed above.
+The examples for vectors and functions are pretty fiddly, so here's the example for `Option`:
+
+{% highlight rust %}
+fn main() {
+    let opt_str: Option<&'static str> = wrap_opt("foo");
+    let opt_fun = wrap_opt(|string: &'static str| {string.len()});
+    let opt_res: Option<usize> = apply_opt(opt_str, opt_fun);
+    println!("{:?}", opt_res); // prints "Some(3)"
+
+    let very_specific_none: Option<&Fn(&'static str) -> usize> =
+        None;
+    let opt_other_res: Option<usize> = 
+        apply_opt(opt_str, very_specific_none);
+    println!("{:?}", opt_other_res); // prints "None"
+}
+
+fn apply_opt<A, B, F>
+    (opt_a: Option<A>, opt_f: Option<F>) -> Option<B>
+    where F: Fn(A) -> B
+{
+    match (opt_a, opt_f) {
+        (Some(a), Some(f)) => Some(f(a)),
+        _                  => None,
+    }
+}
+
+fn wrap_opt<A>(a: A): Option<A>
+{
+    Some(a)
+}
+{% endhighlight %}
+
+Now, this pattern is more useful to abstract over. In particular, say we've got something we can intuitively traverse, like a tree or vector or `Option`.
+Say it contains some `A`s.
+Say we also have a function that can turn an `A` into a `T` containing a `B`, where `T` is a type that we can 'apply' like we described above.
+
