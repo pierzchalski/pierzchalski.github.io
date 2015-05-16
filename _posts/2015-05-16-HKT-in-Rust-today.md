@@ -33,17 +33,20 @@ fn convert_vec<A, B, F>(vec: Vec<A>, fun: F) -> Vec<B>
 }
 {% endhighlight %}
 
-There's also something similar for `Option<A>`, and for `Result<A, Err>`, and for pairs `(First, A)`, and (I think this one is kind of cool) for `Box<Fn(Start) -> A>`:
+There's also something similar for `Option<A>`, for `Result<A, Err>`, for pairs `(First, A)`, and (I think this one is kind of cool) for `Box<Fn(Start) -> A>`:
 
 {% highlight rust %}
 fn main() {
-    let fun1 = Box::new(|string: &str| {string.len()});
-    let fun2 = convert_fun(fun1, |len| {len * 3});
+    let fun1: Box<Fn(&'static str) -> usize> = 
+        Box::new(|string: &str| {string.len()});
+    let fun2: Box<Fn(&'static str) -> usize> = 
+        convert_fun(fun1, |len| {len * 3});
     println!("{:?}", fun2("Cool")); // prints "12"
 
-    let fun3 = convert_fun(fun2, |number| {
-        format!("I have a number: {}", number)
-    });
+    let fun3: Box<Fn(&'static str) -> String> = 
+        convert_fun(fun2, |number| {
+            format!("I have a number: {}", number)
+        });
     println!("{}", fun3("Cool")); // prints "I have a number: 12"
 }
 
@@ -58,4 +61,6 @@ fn convert_fun<'a, Start, A, B, F>
 }
 {% endhighlight %}
 
-I may have lied slightly: you might have noticed the lifetime parameter `'a` in the code above, which is important for making sure that the function (`f`) you use to convert things lives at least as long as the things it converts.
+I may have lied slightly: you might have noticed the lifetime parameter `'a` in the code above being used for both the thing we're converting (`fun`) and the function we use to convert it (`f`).
+This is important for making sure that the converting function `f` lives at least as long as the things it converts.
+We can stick this same pattern into all the other examples, so maybe the proper abstraction involves functions with lifetimes instead of just lifetimes.
