@@ -63,4 +63,4 @@ fn convert_fun<'a, Start, A, B, F>
 
 I may have lied slightly: you might have noticed the lifetime parameter `'a` in the code above being used for both the thing we're converting (`fun`) and the function we use to convert it (`f`).
 This is important for making sure that the converting function `f` lives at least as long as the things it converts.
-We can stick this same pattern into all the other examples, so maybe the proper abstraction involves functions with lifetimes instead of just lifetimes.
+We can stick this same pattern into all the other examples, so maybe the abstraction involves functions with lifetimes.
