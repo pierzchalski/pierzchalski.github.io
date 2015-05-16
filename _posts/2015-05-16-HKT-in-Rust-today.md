@@ -33,7 +33,7 @@ fn convert_vec<A, B, F>(vec: Vec<A>, fun: F) -> Vec<B>
 }
 {% endhighlight %}
 
-There's also something similar for `Option<A>`, for `Result<A, Err>`, for pairs `(First, A)`, and (I think this one is kind of cool) for `Box<Fn(Start) -> A>`:
+There's also something similar for `Option<A>`, for `Result<A, Error>`, for pairs `(First, A)`, and (I think this one is kind of cool) for `Box<Fn(Start) -> A>`:
 
 {% highlight rust %}
 fn main() {
@@ -108,7 +108,22 @@ fn wrap_opt<A>(a: A): Option<A>
 }
 {% endhighlight %}
 
-Now, this pattern is more useful to abstract over. In particular, say we've got something we can intuitively traverse, like a tree or vector or `Option`.
-Say it contains some `A`s.
-Say we also have a function that can turn an `A` into a `T` containing a `B`, where `T` is a type that we can 'apply' like we described above.
+Now, this pattern is more useful to abstract over. In particular, say we've got something we can intuitively traverse, like a vector or `Option`.
+Say that our traversable container contains _another_ container `T`, which is one of these 'applicable' containers we just described.
+Then we can 'transpose' the outer container and the inner 'applicable' container.
+For instance, we can turn a `Vec<Option<A>>` into an `Option<Vec<A>>`, or a `Vec<Result<A, Error>>` into a `Result<Vec<A>, Error>`.
+We might see that last example if, for instance, we had a vector of files and then tried to open each one.
+
+You can probably imagine the general pattern:
+things like `Option` and `Result` encode the idea of 'normal behaviour _or something else_', so turning a `Vec<Result<A, Error>>` into a `Result<Vec<A>, Error>` probably means encoding whether there were any 'something else' cases inside the original vector.
+
+The type `Box<Fn(Start) -> A + 'a>` encodes (amongst other things, like memory and lifetime book-keeping) the idea that 'once you give me a `Start`, I can give you an `A`'.
+So turning a `Vec<Box<Fn(Start) -> A + 'a>>` into a `Box<Fn(Start) -> Vec<A> + 'a>` probably encodes the idea that 'once you give me a `Start`, I can use all these functions to give you a `Vec<A>`'.
+
+Typically we construct the result in sequence, using the original vector of applicable containers.
+For instance, if we have a vector `vec![Ok(1), Err("oh no!"), Err("whoops")]`, the result would be `Err("oh no!")`.
+If we had a vector of functions, the resulting function would produce a vector with elements in the same order as the original vector.
+For that reason, this pattern is sometimes called 'sequencing' as opposed to 'transposing'.
+We're probably going to see the `Vec<Result<_, _>>` use-case pretty often, so let's write that up:
+
 
