@@ -1,7 +1,7 @@
 ---
 layout:     post
 title:      Test Post Do Not Upvote
-date:       2015-05-15 23:04:35
+date:       2015-05-15
 summary:    Does this work? Did anything explode?
 ---
 
