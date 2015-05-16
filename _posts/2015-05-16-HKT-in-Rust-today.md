@@ -58,3 +58,4 @@ fn convert_fun<'a, Start, A, B, F>
 }
 {% endhighlight %}
 
+I may have lied slightly: you might have noticed the lifetime parameter `'a` in the code above, which is important for making sure that the function (`f`) you use to convert things lives at least as long as the things it converts.
