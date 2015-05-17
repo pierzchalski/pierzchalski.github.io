@@ -117,10 +117,11 @@ Then we can 'transpose' the outer container and the inner 'applicable' container
 For instance, we can turn a `Vec<Option<A>>` into an `Option<Vec<A>>`, or a `Vec<Result<A, Error>>` into a `Result<Vec<A>, Error>`.
 We might see that last example if, for instance, we had a vector of files and then tried to open each one.
 
-You can probably imagine the general pattern:
-things like `Option` and `Result` encode the idea of 'normal behaviour _or something else_', so turning a `Vec<Result<A, Error>>` into a `Result<Vec<A>, Error>` probably means encoding whether there were any 'something else' cases inside the original vector.
+You can probably imagine the general concept behind this pattern:
+things like `Option` and `Result` encode the idea of 'normal behaviour _or something else_', so turning a `Vec<Result<A, Error>>` into a `Result<Vec<A>, Error>` probably means encoding whether there were any '_something else_' cases inside the original vector.
 
-The type `Box<Fn(Start) -> A + 'a>` encodes (amongst other things, like memory and lifetime book-keeping) the idea that 'once you give me a `Start`, I can give you an `A`'.
+The type `Box<Fn(Start) -> A + 'a>` encodes the idea that 'once you give me a `Start`, I can give you an `A`' 
+(It also encodes a bunch of other stuff about memory and lifetimes that isn't too relevant here).
 So turning a `Vec<Box<Fn(Start) -> A + 'a>>` into a `Box<Fn(Start) -> Vec<A> + 'a>` probably encodes the idea that 'once you give me a `Start`, I can use all these functions to give you a `Vec<A>`'.
 
 Typically we construct the result in sequence, using the original vector of applicable containers.
