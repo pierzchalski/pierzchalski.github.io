@@ -14,7 +14,8 @@ There's something similar for Rusts vectors:[^1]
 [^1]: This post was written using the Rust nightly version 
 
 {% highlight rust %}
-fn main() {
+fn main() 
+{
     let vec1: Vec<&str> = vec!["Hello", ", ", "World!"];
     let vec2: Vec<usize> = convert_vec(vec1, |string| {
         string.len()
@@ -36,7 +37,8 @@ fn convert_vec<A, B, F>(vec: Vec<A>, fun: F) -> Vec<B>
 There's also something similar for `Option<A>`, for `Result<A, Error>`, for pairs `(First, A)`, and (I think this one is kind of cool) for `Box<Fn(Start) -> A>`:
 
 {% highlight rust %}
-fn main() {
+fn main() 
+{
     let fun1: Box<Fn(&'static str) -> usize> = 
         Box::new(|string: &str| {string.len()});
     let fun2: Box<Fn(&'static str) -> usize> = 
@@ -79,7 +81,8 @@ We can produce examples of this 'application' property for all the examples of t
 The examples for vectors and functions are pretty fiddly, so here's the example for `Option`:
 
 {% highlight rust %}
-fn main() {
+fn main() 
+{
     let opt_str: Option<&'static str> = wrap_opt("foo");
     let opt_fun = wrap_opt(|string: &'static str| {string.len()});
     let opt_res: Option<usize> = apply_opt(opt_str, opt_fun);
@@ -108,7 +111,7 @@ fn wrap_opt<A>(a: A): Option<A>
 }
 {% endhighlight %}
 
-Now, this pattern is more useful to abstract over. In particular, say we've got something we can intuitively traverse, like a vector or `Option`.
+Now, this pattern is more useful to abstract over. In particular, say we've got something we can intuitively traverse, like a `Vec` or `Option`.
 Say that our traversable container contains _another_ container `T`, which is one of these 'applicable' containers we just described.
 Then we can 'transpose' the outer container and the inner 'applicable' container.
 For instance, we can turn a `Vec<Option<A>>` into an `Option<Vec<A>>`, or a `Vec<Result<A, Error>>` into a `Result<Vec<A>, Error>`.
