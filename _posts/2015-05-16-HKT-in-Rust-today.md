@@ -1,17 +1,18 @@
 ---
 layout:     post
-title:      HKT in Rust, Today
+title:      High Abstraction in the Land of Rust
 date:       2015-05-16
 summary:    Fun with kinds in Rust.
 ---
 
 There's a pretty common pattern that people encounter all over the place when programming: if you have a container `C` holding a thing of type `A`, and you've got a function that turns `A`s into `B`s, you can get a `C` containing a `B`.
-You can see an example in Pythons `for` comprehensions: if I have a list of strings, I can get a list of integers:
+You can see an example in Python `for` comprehensions: if I have a list of strings, I can get a list of integers:
 
 {% highlight python %} [ len(string) for string in strings ] {% endhighlight %}
 
-There's something similar for Rusts vectors:[^1]
-[^1]: This post was written using the Rust nightly version 
+There's something similar for Rust[^1] vectors:
+
+[^1]: This post was written using Rust version 1.0.0.
 
 {% highlight rust %}
 fn main() 
@@ -34,7 +35,11 @@ fn convert_vec<A, B, F>(vec: Vec<A>, fun: F) -> Vec<B>
 }
 {% endhighlight %}
 
-There's also something similar for `Option<A>`, for `Result<A, Error>`, for pairs `(First, A)`, and (I think this one is kind of cool) for `Box<Fn(Start) -> A>`:
+There's also something similar for `Option<A>`, for `Result<A, Error>`, for pairs `(A, Second)`, and (I think this one is kind of cool) for `Box<Fn(Start) -> A>`.[^2]
+
+[^2]: There's also instances for `Result<Value, A>` and `(First, A)`, but in my experience it's pretty rare to see them in use. When using `Fn(A) -> B` there's also instances for `(A, A)` and `Result<A, A>`, but I've encountered those even less.
+
+Let's take a look at that one:
 
 {% highlight rust %}
 fn main() 
@@ -128,6 +133,6 @@ Typically we construct the result in sequence, using the original vector of appl
 For instance, if we have a vector `vec![Ok(1), Err("oh no!"), Err("whoops")]`, the result would be `Err("oh no!")`.
 If we had a vector of functions, the resulting function would produce a vector with elements in the same order as the original vector.
 For that reason, this pattern is sometimes called 'sequencing' as opposed to 'transposing'.
-We're probably going to see the `Vec<Result<_, _>>` use-case pretty often, so let's write that up:
+We're probably going to see the `Vec<Result<A, Error>>` use-case pretty often, so let's write that up:
 
 
