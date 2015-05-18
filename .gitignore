@@ -2,5 +2,5 @@ _site/*
 Gemfile.lock
 
 *.swp
-*/Cargo.lock
+codesamples/*/Cargo.lock
 codesamples/*/target/*
