@@ -94,10 +94,19 @@ This is what Rust thought C thought our function was:
 
 {% highlight c %}
 
-void foo(slice_t *slice_ret, bar_t x);
+extern void foo(slice_t *slice_ret, bar_t x);
 
 {% endhighlight %}
 
 So all those times we called `foo(x)` from C, Rust would find some random stuff on the stack after `x`, think that that was our `Thing bar`, and then write complete garbage to wherever `x` 'points to'... and unsurprisingly fault!
 
+The solution is the same in both cases: accurately present the function signature.
+It turns out if you write the following signature in C, it gets the same magical C ABI trick as our Rust function, which makes all the registers and stack variables line up:
 
+{% highlight c %}
+
+extern slice_t foo(bar_t x);
+
+{% endhighlight %}
+
+Yep, the only difference between this super correct signature and our original  super silly one is a single, lonely '\*'.
