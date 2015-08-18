@@ -98,7 +98,7 @@ extern void foo(slice_t *slice_ret, bar_t x);
 
 {% endhighlight %}
 
-So all those times we called `foo(x)` from C, Rust would find some random stuff on the stack after `x`, think that that was our `Thing bar`, and then write complete garbage to wherever `x` 'points to'... and unsurprisingly fault!
+So all those times we called `foo(x)` from C, Rust would find some random stuff on the stack after `x`, assume that that that was our `x: Bar` instead, and then write complete garbage to wherever `x` 'points to'... and unsurprisingly fault!
 
 The solution is the same in both cases: accurately present the function signature.
 It turns out if you write the following signature in C, it gets the same magical C ABI trick as our Rust function, which makes all the registers and stack variables line up:
