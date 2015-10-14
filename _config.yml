@@ -5,6 +5,8 @@ author:      "Edward Pierzchalski"
 baseurl:     ""
 url:         "http://pierzchalski.github.io"
 
+markdown: redcarpet
+
 # Google analytics
 google_analytics:
 
@@ -48,4 +50,3 @@ permalink:  pretty
 paginate:   3
 sass:
   compressed: true
-
