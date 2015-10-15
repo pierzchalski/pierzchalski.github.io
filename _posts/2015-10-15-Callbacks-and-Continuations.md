@@ -176,7 +176,7 @@ impl ContQueue {
 }
 ```
 
-Now all you've got to do is figure out when to actually step in the queue. Probably once you get an interrupt or event from the ever-helpful seL4 or something. Have fun!
+Now all you've got to do is figure out when to actually step the queue. Probably once you get an interrupt or event from the ever-helpful seL4 or something. Have fun!
 
 ### <a name="appendix-work"></a> Appendix: Map and Flat Map for `Work<A>`
 
